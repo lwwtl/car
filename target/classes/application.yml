@@ -16,5 +16,5 @@ rlw:
   jwt:
 
     secret: f4e2e52034348f86b67cde581c0f9eb5
-    expire: 3600
+    expire: 36000
     header: to

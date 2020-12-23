@@ -65,6 +65,13 @@ public class EmployeeController {
 
     @PostMapping("/add")
     public Result register(@RequestBody Employee employee) {
+        Employee repeatAccount = employeeService.getOne(new QueryWrapper<Employee>().eq("emp_account",employee.getAccount()));
+        if(repeatAccount != null && employee.getId()==null){
+            return Result.fail("该帐号已存在");
+        }
+        if(repeatAccount != null && !repeatAccount.getId().equals(employee.getId())){
+            return Result.fail("该帐号已存在");
+        }
         if(employee.getId() != null){
             Employee temp = employeeService.getById(employee.getId());
             if(employee.getPassword().equals(temp.getPassword())){
@@ -84,7 +91,6 @@ public class EmployeeController {
             employee.setSalt(salt);
             Md5Hash md5Hash = new Md5Hash(employee.getPassword(),salt,1024);
             employee.setPassword(md5Hash.toHex());
-            employee.setRole("员工");
             employeeService.save(employee);
         }
         return Result.succ(null);
