@@ -51,7 +51,7 @@ public class Employee implements Serializable {
     private Long age;
 
     @TableField("emp_mobile")
-    private String tel;
+    private String mobile;
 
     @TableField("emp_address")
     private String address;
