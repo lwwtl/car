@@ -13,6 +13,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * <p>
@@ -37,6 +38,7 @@ public class Employee implements Serializable {
     @TableField("emp_account")
     private String account;
 
+    @NotBlank(message = "密码不能为空")
     @TableField("emp_password")
     private String password;
 
@@ -44,15 +46,19 @@ public class Employee implements Serializable {
     @TableField("emp_name")
     private String name;
 
+    @NotBlank(message = "性别不能为空")
     @TableField("emp_gender")
     private String gender;
 
+    @NotNull(message = "年龄不能为空")
     @TableField("emp_age")
     private Long age;
 
+    @NotBlank(message = "手机号码不能为空")
     @TableField("emp_mobile")
     private String mobile;
 
+    @NotBlank(message = "地址不能为空")
     @TableField("emp_address")
     private String address;
 
@@ -60,6 +66,7 @@ public class Employee implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastTime;
 
+    @NotBlank(message = "角色不能为空")
     @TableField("emp_role")
     private String role;
 

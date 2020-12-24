@@ -35,12 +35,12 @@ public class EmployeeController {
     EmployeeService employeeService;
 
     //需要登录才能访问    @RequiresAuthentication
-    @GetMapping("/{id}")
-    public Result index(@PathVariable("id") Long id){
-        Employee employee = employeeService.getById(id);
-        System.out.println(employee);
-        return Result.succ(200,"操作成功",employee);
-    }
+//    @GetMapping("/{id}")
+//    public Result index(@PathVariable("id") Long id){
+//        Employee employee = employeeService.getById(id);
+//        System.out.println(employee);
+//        return Result.succ(200,"操作成功",employee);
+//    }
 
     @PostMapping("/list")
     public Result list(@RequestParam(defaultValue = "1") Integer currentPage,@RequestParam(defaultValue = "5") Integer pageSize,@RequestBody Employee employee){
@@ -63,12 +63,14 @@ public class EmployeeController {
         }
     }
 
-    @PostMapping("/add")
-    public Result register(@RequestBody Employee employee) {
+    @PostMapping("/edit")
+    public Result edit(@Validated @RequestBody Employee employee) {
         Employee repeatAccount = employeeService.getOne(new QueryWrapper<Employee>().eq("emp_account",employee.getAccount()));
+        //创建新用户时，只要存在重复账号则无法创建
         if(repeatAccount != null && employee.getId()==null){
             return Result.fail("该帐号已存在");
         }
+        //当传入的修改account非当前用户登录account，并且该account已经存在数据库，禁止修改
         if(repeatAccount != null && !repeatAccount.getId().equals(employee.getId())){
             return Result.fail("该帐号已存在");
         }
