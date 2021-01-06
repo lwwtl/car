@@ -3,12 +3,18 @@ package com.rlw.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rlw.common.lang.Result;
 import com.rlw.entity.Car;
 
+import com.rlw.entity.Store;
+import com.rlw.mapper.CarMapper;
+import com.rlw.mapper.StoreMapper;
 import com.rlw.service.CarService;
+import com.rlw.service.StoreService;
 import com.rlw.util.UploadUtil;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -16,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -34,6 +42,12 @@ public class CarController {
     @Autowired
     CarService carService;
 
+    @Autowired
+    StoreMapper storeMapper;
+
+    @Autowired
+    StoreService storeService;
+
 
     @PostMapping("/list")
     public Result list(@RequestParam(defaultValue = "1") Integer currentPage, @RequestParam(defaultValue = "5") Integer pageSize, @RequestBody Car car) {
@@ -41,8 +55,9 @@ public class CarController {
         QueryWrapper<Car> queryWrapper = new QueryWrapper<>();
         String no = car.getNo();
         String name = car.getName();
+        String region = car.getRegion();
         //String state = car.getState();
-        if (StringUtils.isEmpty(name) && StringUtils.isEmpty(no)) {
+        if (StringUtils.isEmpty(name) && StringUtils.isEmpty(no) && StringUtils.isEmpty(region)) {
             IPage pageData = carService.page(page, new QueryWrapper<Car>().orderByDesc("car_id"));
             return Result.succ(pageData);
         } else {
@@ -52,18 +67,16 @@ public class CarController {
             if (!StringUtils.isEmpty(no)) {
                 queryWrapper.like("car_no", car.getNo());
             }
+            if (!StringUtils.isEmpty(region)) {
+                queryWrapper.eq("car_region", car.getRegion());
+            }
             IPage pageData = carService.page(page, queryWrapper.orderByDesc("car_id"));
             return Result.succ(pageData);
         }
     }
 
 
-    @GetMapping("/{id}")
-    public Result index(@PathVariable("id") Long id) {
-        Car car = carService.getById(id);
-        System.out.println(car);
-        return Result.succ(200, "操作成功", car);
-    }
+
 
     @PostMapping("/edit")
     public Result edit(@RequestBody Car car) {
@@ -87,6 +100,14 @@ public class CarController {
         Car car = carService.getById(id);
         Assert.notNull(car, "该车辆已被删除");
         return Result.succ(car);
+    }
+
+    @PostMapping("/findStore")
+    public Result find(@RequestParam(name = "region") String region) {
+        QueryWrapper<Store> wrapper = new QueryWrapper<>();
+        wrapper.eq("store_address",region);
+        List <Store> storeList = storeMapper.selectList(wrapper);
+        return Result.succ(storeList);
     }
 
     @GetMapping("/del/{id}")

@@ -71,7 +71,10 @@ public class Car implements Serializable {
     private String state;
 
     @TableField("car_store")
-    private Long store;
+    private String store;
+
+    @TableField("car_region")
+    private String region;
 
 
 }
