@@ -42,7 +42,7 @@ public class CarController {
     @Autowired
     CarService carService;
 
-    @Autowired
+    @Autowired(required = false)
     StoreMapper storeMapper;
 
     @Autowired

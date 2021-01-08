@@ -7,7 +7,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.rlw.common.dto.LoginDto;
 import com.rlw.common.lang.Result;
 import com.rlw.entity.Employee;
+import com.rlw.entity.User;
 import com.rlw.service.EmployeeService;
+import com.rlw.service.UserService;
 import com.rlw.util.JwtUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -30,6 +32,9 @@ public class AccountController {
 
     @Autowired
     EmployeeService employeeService;
+
+    @Autowired
+    UserService userService;
 
     @Autowired
     JwtUtils jwtUtils;
@@ -60,6 +65,33 @@ public class AccountController {
                 .put("name",employee.getName())
                 .put("account",employee.getAccount())
                 .put("role",employee.getRole())
+                .map()
+        );
+    }
+
+    @PostMapping("/userLogin")
+    public Result userLogin(@Validated @RequestBody LoginDto loginDto, HttpServletResponse response){
+
+        User user = userService.getOne(new QueryWrapper<User>().eq("user_account", loginDto.getAccount()));
+        //断言
+        Assert.notNull(user,"用户不存在");
+        Md5Hash md5Hash = new Md5Hash(loginDto.getPassword(), user.getSalt(),1024);
+
+        if(!user.getPassword().equals(md5Hash.toHex())){
+//        if(!employee.getEPassword().equals(loginDto.getPassword())){
+            return Result.fail("密码不正确");
+        }
+        //生成token
+        String jwt = jwtUtils.generateToken(user.getId());
+        //把jwt放入到请求头中
+        response.setHeader("Authorization",jwt);
+        response.setHeader("Access-Control-Expose-Headers", "Authorization");
+
+        return Result.succ(MapUtil.builder()
+                .put("id",user.getId())
+                .put("name",user.getName())
+                .put("account",user.getAccount())
+                .put("state",user.getState())
                 .map()
         );
     }
