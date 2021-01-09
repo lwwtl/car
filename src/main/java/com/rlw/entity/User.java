@@ -105,4 +105,11 @@ public class User implements Serializable {
     private String salt;
 
 
+    /**
+     * 该字段不是数据库字段
+     * */
+    @TableField(exist = false)
+    private String code;
+
+
 }

@@ -75,6 +75,9 @@ public class AccountController {
         User user = userService.getOne(new QueryWrapper<User>().eq("user_account", loginDto.getAccount()));
         //断言
         Assert.notNull(user,"用户不存在");
+        if(user.getState()!='1'){
+            Assert.notNull(user,"该账号被封禁，请联系客服");
+        }
         Md5Hash md5Hash = new Md5Hash(loginDto.getPassword(), user.getSalt(),1024);
 
         if(!user.getPassword().equals(md5Hash.toHex())){

@@ -4,6 +4,25 @@ spring:
     url: jdbc:mysql://localhost:3306/car?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai
     username: root
     password: root
+
+#邮箱验证码
+  mail:
+    default-encoding: UTF-8
+    host: smtp.qq.com
+    password: minlqmtnzmzlbjdj
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
+    username: 503148351@qq.com
+
+  redis:
+    database: 0
+    host: localhost
+    port: 6379
+
+
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**Mapper.xml
 server:
@@ -18,3 +37,5 @@ rlw:
     secret: f4e2e52034348f86b67cde581c0f9eb5
     expire: 36000
     header: to
+
+
