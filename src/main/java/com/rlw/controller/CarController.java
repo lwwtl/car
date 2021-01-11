@@ -75,6 +75,23 @@ public class CarController {
         }
     }
 
+    /*
+
+        select *
+        from t_car
+        where
+        car_state != '维修中'
+        and car_id not in
+        (
+        select car_id
+        from t_order
+        where
+        '2021-01-11 17:58:53' BETWEEN  order_start and order_end
+        or '2021-01-13 17:54:53' BETWEEN  order_start  and order_end
+        )
+
+
+     */
 
 
 
