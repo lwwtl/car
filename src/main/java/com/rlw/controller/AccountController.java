@@ -17,6 +17,7 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 public class AccountController {
@@ -75,8 +78,8 @@ public class AccountController {
         User user = userService.getOne(new QueryWrapper<User>().eq("user_account", loginDto.getAccount()));
         //断言
         Assert.notNull(user,"用户不存在");
-        if(user.getState()!='1'){
-            Assert.notNull(user,"该账号被封禁，请联系客服");
+        if(user.getState() != 1){
+            return Result.fail("该账号被封禁，请联系客服");
         }
         Md5Hash md5Hash = new Md5Hash(loginDto.getPassword(), user.getSalt(),1024);
 
@@ -105,4 +108,5 @@ public class AccountController {
         SecurityUtils.getSubject().logout();
         return Result.succ(null);
     }
+
 }

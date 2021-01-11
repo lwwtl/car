@@ -28,6 +28,11 @@ public class JwtFilter extends AuthenticatingFilter {
         // 获取 token
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String jwt = request.getHeader("Authorization");
+        if(request.getHeader("isUser")!=null){
+            jwtUtils.setFlag(false);
+        }else {
+            jwtUtils.setFlag(true);
+        }
         if(StringUtils.isEmpty(jwt)){
             return null;
         }

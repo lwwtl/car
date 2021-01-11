@@ -2,7 +2,9 @@ package com.rlw.shiro;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.rlw.entity.Employee;
+import com.rlw.entity.User;
 import com.rlw.service.EmployeeService;
+import com.rlw.service.UserService;
 import com.rlw.util.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.*;
@@ -19,6 +21,8 @@ public class AccountRealm extends AuthorizingRealm {
     JwtUtils jwtUtils;
     @Autowired
     EmployeeService employeeService;
+    @Autowired
+    UserService userService;
     @Override
     public boolean supports(AuthenticationToken token) {
         return token instanceof JwtToken;
@@ -33,19 +37,28 @@ public class AccountRealm extends AuthorizingRealm {
         log.info("jwt----------------->{}", jwt);
         /*拿到用户信息*/
         String userId = jwtUtils.getClaimByToken((String) jwt.getPrincipal()).getSubject();
-
-
-        Employee employee = employeeService.getById(Long.parseLong(userId));
-        if(employee == null) {
-            throw new UnknownAccountException("账户不存在！");
+        if(jwtUtils.getFlag()){
+            Employee employee = employeeService.getById(Long.parseLong(userId));
+            if(employee == null) {
+                throw new UnknownAccountException("账户不存在！");
+            }
+            AccountProfile profile = new AccountProfile();
+            BeanUtil.copyProperties(employee, profile);
+            log.info("profile----------------->{}", profile.toString());
+            return new SimpleAuthenticationInfo(profile, jwt.getCredentials(), getName());
+        }else {
+            User user = userService.getById(Long.parseLong(userId));
+            if(user == null) {
+                throw new UnknownAccountException("账户不存在！");
+            }
+            if(user.getState() == -1) {
+                throw new LockedAccountException("账户已被锁定！");
+            }
+            /*返回给shiro*/
+            AccountProfile profile = new AccountProfile();
+            BeanUtil.copyProperties(user, profile);
+            log.info("profile----------------->{}", profile.toString());
+            return new SimpleAuthenticationInfo(profile, jwt.getCredentials(), getName());
         }
-//        if(employee.getStatus() == -1) {
-//            throw new LockedAccountException("账户已被锁定！");
-//        }
-        /*返回给shiro*/
-        AccountProfile profile = new AccountProfile();
-        BeanUtil.copyProperties(employee, profile);
-        log.info("profile----------------->{}", profile.toString());
-        return new SimpleAuthenticationInfo(profile, jwt.getCredentials(), getName());
     }
 }

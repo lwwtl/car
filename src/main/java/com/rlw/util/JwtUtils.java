@@ -19,6 +19,7 @@ public class JwtUtils {
     private String secret;
     private long expire;
     private String header;
+    private Boolean flag = true;
 
     /**
      * 生成jwt token

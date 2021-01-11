@@ -5,20 +5,26 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rlw.common.lang.Result;
-import com.rlw.entity.Employee;
 import com.rlw.entity.User;
-import com.rlw.service.MailService;
 import com.rlw.service.UserService;
+import com.rlw.util.JwtUtils;
 import com.rlw.util.SaltUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
+import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -35,10 +41,15 @@ public class UserController {
     UserService userService;
 
     @Autowired
-    private MailService mailService;
+    private RedisTemplate redisTemplate;
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private JavaMailSender mailSender;//一定要用@Autowired
+
+    //application.properties中已配置的值
+    @Value("${spring.mail.username}")
+    private String from;
+
 
 
     @PostMapping("/list")
@@ -126,10 +137,52 @@ public class UserController {
     }
 
 
+    /**
+     * 给前端输入的邮箱，发送验证码
+     * @param email
+     * @param
+     * @return
+     */
 
-    @PostMapping("/sendEmail")
-    public Result sendEmail(String email){
-        mailService.sendMimeMail(email);
+    @PostMapping("/sendEmail/{email}")
+    public Result sendEmail(@PathVariable(name = "email")String email){
+
+        try {
+            SimpleMailMessage mailMessage = new SimpleMailMessage();
+            mailMessage.setSubject("验证码邮件");//主题
+            //生成随机数
+            String code = randomCode();
+            //将随机数放置到redis中
+            redisTemplate.opsForValue().set("user:"+email,code);
+            redisTemplate.expire("user:"+email,300, TimeUnit.SECONDS);
+            mailMessage.setText("您收到的验证码是： "+code+"  (5分钟内有效) ");//内容
+            mailMessage.setTo(email);//发给谁
+            mailMessage.setFrom(from);//你自己的邮箱
+            mailSender.send(mailMessage);//发送
+            return Result.succ(null);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.fail(null);
+        }
+    }
+
+    /**
+     * 随机生成6位数的验证码
+     * @return String code
+     */
+    public String randomCode(){
+        StringBuilder str = new StringBuilder();
+        Random random = new Random();
+        for (int i = 0; i < 6; i++) {
+            str.append(random.nextInt(10));
+        }
+        return str.toString();
+    }
+
+    @RequiresAuthentication
+    @GetMapping("/logout")
+    public Result logout(){
+        SecurityUtils.getSubject().logout();
         return Result.succ(null);
     }
 }
