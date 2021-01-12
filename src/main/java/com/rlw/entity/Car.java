@@ -55,8 +55,8 @@ public class Car implements Serializable {
     @TableField("car_seat")
     private Long seat;
 
-    @TableField("car_color")
-    private String color;
+    @TableField("car_brand")
+    private String brand;
 
     @TableField("car_price")
     private BigDecimal price;

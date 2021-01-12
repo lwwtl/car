@@ -5,10 +5,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.rlw.common.dto.CarDto;
 import com.rlw.common.lang.Result;
 import com.rlw.entity.Car;
 
 import com.rlw.entity.Store;
+import com.rlw.entity.User;
 import com.rlw.mapper.CarMapper;
 import com.rlw.mapper.StoreMapper;
 import com.rlw.service.CarService;
@@ -50,25 +52,32 @@ public class CarController {
 
 
     @PostMapping("/list")
-    public Result list(@RequestParam(defaultValue = "1") Integer currentPage, @RequestParam(defaultValue = "5") Integer pageSize, @RequestBody Car car) {
+    public Result list(@RequestParam(defaultValue = "1") Integer currentPage, @RequestParam(defaultValue = "5") Integer pageSize, @RequestBody CarDto carDto) {
         Page page = new Page(currentPage, pageSize);
         QueryWrapper<Car> queryWrapper = new QueryWrapper<>();
-        String no = car.getNo();
-        String name = car.getName();
-        String region = car.getRegion();
+        String no = carDto.getNo();
+        String name = carDto.getName();
+        String region = carDto.getRegion();
+        String store = carDto.getSource();
+        String start = carDto.getStart();
+        String end = carDto.getEnd();
+        if(!StringUtils.isEmpty(store)){
+            List<Car> cars = carService.findRentCar(store,start,end);
+            System.out.println(cars);
+        }
         //String state = car.getState();
         if (StringUtils.isEmpty(name) && StringUtils.isEmpty(no) && StringUtils.isEmpty(region)) {
             IPage pageData = carService.page(page, new QueryWrapper<Car>().orderByDesc("car_id"));
             return Result.succ(pageData);
         } else {
             if (!StringUtils.isEmpty(name)) {
-                queryWrapper.like("car_name", car.getName());
+                queryWrapper.like("car_name", carDto.getName());
             }
             if (!StringUtils.isEmpty(no)) {
-                queryWrapper.like("car_no", car.getNo());
+                queryWrapper.like("car_no", carDto.getNo());
             }
             if (!StringUtils.isEmpty(region)) {
-                queryWrapper.eq("car_region", car.getRegion());
+                queryWrapper.eq("car_region", carDto.getRegion());
             }
             IPage pageData = carService.page(page, queryWrapper.orderByDesc("car_id"));
             return Result.succ(pageData);
