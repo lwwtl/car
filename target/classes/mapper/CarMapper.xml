@@ -4,7 +4,9 @@
 
 
     <select id="findRentCar" parameterType="String" resultType="com.rlw.entity.Car">
-select *
+    select car_id as id,car_name as name,car_no as no,car_model as model,car_type as type,car_box as box,
+    car_output as output,car_seat as seat,car_brand as brand,car_price as price,car_rent as rent,
+    car_img as img,car_state as state,car_store as store,car_region as region
     from t_car
     where
     car_state != '维修中'
@@ -17,6 +19,18 @@ select *
     #{start} BETWEEN  order_start and order_end
     or #{end} BETWEEN  order_start  and order_end
     )
+        <if test="status !=null and status !='' and status =='1'.toString()">
+            ORDER BY car_output DESC
+        </if>
+        <if test="status !=null and status !='' and status =='2'.toString()">
+            ORDER BY car_output ASC
+        </if>
+        <if test="status !=null and status !='' and status =='3'.toString()">
+            ORDER BY car_rent DESC
+        </if>
+        <if test="status !=null and status !='' and status =='4'.toString()">
+            ORDER BY car_rent ASC
+        </if>
     </select>
 
 

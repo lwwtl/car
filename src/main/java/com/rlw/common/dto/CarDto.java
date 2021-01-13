@@ -17,4 +17,5 @@ public class CarDto implements Serializable {
     private String end;
     private String source;
     private String destination;
+    private String status;
 }

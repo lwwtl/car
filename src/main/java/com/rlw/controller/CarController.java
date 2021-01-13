@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.rlw.common.dto.CarDto;
 import com.rlw.common.lang.Result;
 import com.rlw.entity.Car;
@@ -58,15 +60,35 @@ public class CarController {
         String no = carDto.getNo();
         String name = carDto.getName();
         String region = carDto.getRegion();
-        String store = carDto.getSource();
+        String source = carDto.getSource();
         String start = carDto.getStart();
         String end = carDto.getEnd();
-        if(!StringUtils.isEmpty(store)){
-            List<Car> cars = carService.findRentCar(store,start,end);
-            System.out.println(cars);
+        String status = carDto.getStatus();
+        /*前台查询门店可组车辆*/
+        if(!StringUtils.isEmpty(source)){
+            PageHelper.startPage(currentPage,pageSize);
+            List<Car> cars = carService.findRentCar(source,start,end,status);
+            PageInfo<Car> pageInfo = new PageInfo<>(cars);
+            return Result.succ(pageInfo);
         }
         //String state = car.getState();
+        /*后台查询*/
         if (StringUtils.isEmpty(name) && StringUtils.isEmpty(no) && StringUtils.isEmpty(region)) {
+            if(!StringUtils.isEmpty(status)){
+                if(status.equals("1")){
+                    IPage pageData = carService.page(page, queryWrapper.orderByDesc("car_output"));
+                    return Result.succ(pageData);
+                }else if(status.equals("2")){
+                    IPage pageData = carService.page(page, queryWrapper.orderByAsc("car_output"));
+                    return Result.succ(pageData);
+                }else if(status.equals("3")){
+                    IPage pageData = carService.page(page, queryWrapper.orderByDesc("car_rent"));
+                    return Result.succ(pageData);
+                }else if(status.equals("4")){
+                    IPage pageData = carService.page(page, queryWrapper.orderByAsc("car_rent"));
+                    return Result.succ(pageData);
+                }
+            }
             IPage pageData = carService.page(page, new QueryWrapper<Car>().orderByDesc("car_id"));
             return Result.succ(pageData);
         } else {
@@ -79,29 +101,10 @@ public class CarController {
             if (!StringUtils.isEmpty(region)) {
                 queryWrapper.eq("car_region", carDto.getRegion());
             }
-            IPage pageData = carService.page(page, queryWrapper.orderByDesc("car_id"));
-            return Result.succ(pageData);
+                IPage pageData = carService.page(page, queryWrapper.orderByDesc("car_id"));
+                return Result.succ(pageData);
         }
     }
-
-    /*
-
-        select *
-        from t_car
-        where
-        car_state != '维修中'
-        and car_id not in
-        (
-        select car_id
-        from t_order
-        where
-        '2021-01-11 17:58:53' BETWEEN  order_start and order_end
-        or '2021-01-13 17:54:53' BETWEEN  order_start  and order_end
-        )
-
-
-     */
-
 
 
     @PostMapping("/edit")
