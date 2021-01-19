@@ -46,8 +46,7 @@ public class CarController {
     @Autowired
     CarService carService;
 
-    @Autowired(required = false)
-    StoreMapper storeMapper;
+
 
     @Autowired
     StoreService storeService;
@@ -131,13 +130,7 @@ public class CarController {
         return Result.succ(car);
     }
 
-    @PostMapping("/findStore")
-    public Result find(@RequestParam(name = "region") String region) {
-        QueryWrapper<Store> wrapper = new QueryWrapper<>();
-        wrapper.eq("store_address",region);
-        List <Store> storeList = storeMapper.selectList(wrapper);
-        return Result.succ(storeList);
-    }
+
 
     @GetMapping("/del/{id}")
     public Result del(@PathVariable(name = "id") Long id) {

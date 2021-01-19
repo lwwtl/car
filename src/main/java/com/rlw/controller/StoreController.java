@@ -7,12 +7,15 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rlw.common.lang.Result;
 import com.rlw.entity.Car;
 import com.rlw.entity.Store;
+import com.rlw.mapper.StoreMapper;
 import com.rlw.service.StoreService;
 import lombok.experimental.Accessors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * <p>
@@ -25,6 +28,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/store")
 public class StoreController {
+
+    @Autowired(required = false)
+    StoreMapper storeMapper;
 
     @Autowired
     StoreService storeService;
@@ -71,6 +77,22 @@ public class StoreController {
     public Result find(@PathVariable(name = "id") Long id) {
         Store store = storeService.getById(id);
         Assert.notNull(store, "该门店已被删除");
+        return Result.succ(store);
+    }
+
+    @PostMapping("/findStore")
+    public Result findStore(@RequestParam(name = "region") String region) {
+        QueryWrapper<Store> wrapper = new QueryWrapper<>();
+        wrapper.eq("store_address",region);
+        List<Store> storeList = storeMapper.selectList(wrapper);
+        return Result.succ(storeList);
+    }
+
+    @PostMapping("/findStoreByName")
+    public Result findStoreByName(@RequestParam(name = "storeName") String storeName) {
+        QueryWrapper<Store> wrapper = new QueryWrapper<>();
+        wrapper.eq("store_name",storeName);
+        Store store = storeService.getOne(wrapper);
         return Result.succ(store);
     }
 
