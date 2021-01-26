@@ -12,5 +12,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2021-01-12
  */
 public interface OrderMapper extends BaseMapper<Order> {
-
+    String findByNo(String carNo);
 }

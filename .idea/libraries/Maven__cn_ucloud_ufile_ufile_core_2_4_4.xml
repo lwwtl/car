@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: cn.ucloud.ufile:ufile-core:2.4.4">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/cn/ucloud/ufile/ufile-core/2.4.4/ufile-core-2.4.4.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/cn/ucloud/ufile/ufile-core/2.4.4/ufile-core-2.4.4-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/cn/ucloud/ufile/ufile-core/2.4.4/ufile-core-2.4.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

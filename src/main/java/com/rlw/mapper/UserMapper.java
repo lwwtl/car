@@ -12,5 +12,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2021-01-08
  */
 public interface UserMapper extends BaseMapper<User> {
-
+    String findByAccount(String account);
 }

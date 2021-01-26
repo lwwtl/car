@@ -12,5 +12,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2021-01-08
  */
 public interface UserService extends IService<User> {
-
+    String findByAccount(String account);
 }

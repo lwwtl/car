@@ -38,4 +38,11 @@ rlw:
     expire: 36000
     header: to
 
-
+ucloud:
+  ufile:
+    bucket-name: rlw
+    expires: 315360000
+    private-key: d17bc2fe-beae-48d0-937e-f651d871f9c4
+    public-key: TOKEN_e8b9963a-77df-4d85-ac0d-ad1923f872bb
+    region: cn-bj
+    suffix: ufileos.com

@@ -12,5 +12,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2021-01-12
  */
 public interface OrderService extends IService<Order> {
-
+    String findByNo(String carNo);
 }

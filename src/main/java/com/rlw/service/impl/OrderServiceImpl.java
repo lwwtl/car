@@ -1,9 +1,11 @@
 package com.rlw.service.impl;
 
 import com.rlw.entity.Order;
+import com.rlw.mapper.CarMapper;
 import com.rlw.mapper.OrderMapper;
 import com.rlw.service.OrderService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,4 +19,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements OrderService {
 
+    @Autowired(required = false)
+    private OrderMapper orderMapper;
+
+    @Override
+    public String findByNo(String carNo) {
+        return orderMapper.findByNo(carNo);
+    }
 }

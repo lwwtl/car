@@ -15,6 +15,7 @@ import com.rlw.entity.Store;
 import com.rlw.entity.User;
 import com.rlw.mapper.CarMapper;
 import com.rlw.mapper.StoreMapper;
+import com.rlw.provider.UCloudProvider;
 import com.rlw.service.CarService;
 import com.rlw.service.StoreService;
 import com.rlw.util.UploadUtil;
@@ -47,7 +48,8 @@ public class CarController {
     CarService carService;
 
 
-
+@Autowired
+private UCloudProvider uCloudProvider;
     @Autowired
     StoreService storeService;
 
@@ -140,16 +142,30 @@ public class CarController {
         return Result.succ(null);
     }
 
-    @PostMapping("/upload/img")
+    /**
+     * 七牛云图片上传
+     * */
+    /*@PostMapping("/upload/img")
     public Result upload(MultipartFile file)throws IOException {
         //      图片上传到服务器
         String imageUrl = new UploadUtil().upload(UUID.randomUUID().toString(),file.getBytes());
+        return Result.succ(imageUrl);*/
+
+    /**
+     * UCloud图片上传
+     * */
+    @PostMapping("/upload/img")
+    public Result upload(MultipartFile file)throws IOException {
+        //      图片上传到服务器
+        String imageUrl = uCloudProvider.upload(file.getInputStream(), file.getContentType(), file.getOriginalFilename());
         return Result.succ(imageUrl);
 }
 
+    /**
+     * 本地图片上传
+     * */
 //    @PostMapping("/upload/img")
 //    public Result upload(MultipartFile file){
-//        /*本地图片上传*/
 //        String fileName = file.getOriginalFilename();  // 文件名
 //        String suffixName = fileName.substring(fileName.lastIndexOf("."));  // 后缀名
 //        String filePath = "E://毕业设计//upload//"; // 上传后的路径

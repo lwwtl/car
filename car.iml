@@ -138,8 +138,8 @@
     <orderEntry type="library" name="Maven: org.mapstruct:mapstruct:1.2.0.Final" level="project" />
     <orderEntry type="library" name="Maven: io.springfox:springfox-swagger-ui:2.9.2" level="project" />
     <orderEntry type="library" name="Maven: com.qiniu:qiniu-java-sdk:7.4.0" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.squareup.okhttp3:okhttp:3.14.7" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.squareup.okio:okio:1.17.2" level="project" />
+    <orderEntry type="library" name="Maven: com.squareup.okhttp3:okhttp:3.14.7" level="project" />
+    <orderEntry type="library" name="Maven: com.squareup.okio:okio:1.17.2" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.6" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-mail:2.2.6.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: com.sun.mail:jakarta.mail:1.6.5" level="project" />
@@ -166,5 +166,7 @@
     <orderEntry type="library" name="Maven: com.github.pagehelper:pagehelper-spring-boot-autoconfigure:1.2.12" level="project" />
     <orderEntry type="library" name="Maven: com.github.pagehelper:pagehelper:5.1.10" level="project" />
     <orderEntry type="library" name="Maven: com.github.jsqlparser:jsqlparser:2.0" level="project" />
+    <orderEntry type="library" name="Maven: cn.ucloud.ufile:ufile-client-java:2.4.4" level="project" />
+    <orderEntry type="library" name="Maven: cn.ucloud.ufile:ufile-core:2.4.4" level="project" />
   </component>
 </module>
