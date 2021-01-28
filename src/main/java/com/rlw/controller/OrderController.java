@@ -19,6 +19,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -77,6 +79,8 @@ public class OrderController {
         if (order.getOrderId() != null) {
             orderService.saveOrUpdate(order);
         }else {
+            order.setOrderCreate(LocalDateTime.now());
+            order.setOrderState("待支付");
             orderService.save(order);
         }
         return Result.succ(null);
