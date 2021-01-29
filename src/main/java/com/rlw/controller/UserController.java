@@ -44,7 +44,7 @@ public class UserController {
     private RedisTemplate redisTemplate;
 
     @Autowired
-    private JavaMailSender mailSender;//一定要用@Autowired
+    private JavaMailSender javaMailSender;//一定要用@Autowired
 
     //application.properties中已配置的值
     @Value("${spring.mail.username}")
@@ -158,7 +158,7 @@ public class UserController {
             mailMessage.setText("您收到的验证码是： "+code+"  (5分钟内有效) ");//内容
             mailMessage.setTo(email);//发给谁
             mailMessage.setFrom(from);//你自己的邮箱
-            mailSender.send(mailMessage);//发送
+            javaMailSender.send(mailMessage);//发送
             return Result.succ(null);
         }catch (Exception e){
             e.printStackTrace();

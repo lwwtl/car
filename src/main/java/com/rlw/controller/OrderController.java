@@ -15,13 +15,17 @@ import com.rlw.service.OrderService;
 import com.rlw.service.StoreService;
 import com.rlw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -44,6 +48,8 @@ public class OrderController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
     @PostMapping("/list")
     public Result list(@RequestParam(defaultValue = "1") Integer currentPage,
                        @RequestParam(defaultValue = "5") Integer pageSize,
@@ -77,13 +83,40 @@ public class OrderController {
     @PostMapping("/edit")
     public Result edit(@RequestBody Order order) {
         if (order.getOrderId() != null) {
+            order.setOrderState("进行中");
+            redisTemplate.delete("order:"+order.getOrderId());
             orderService.saveOrUpdate(order);
         }else {
+            Long id = Long.valueOf(getOrderIdByTime());
+            order.setOrderId(id);
             order.setOrderCreate(LocalDateTime.now());
             order.setOrderState("待支付");
             orderService.save(order);
+            /*订单支付剩余时间*/
+            redisTemplate.opsForValue().set("order:"+order.getOrderId(),order.getOrderCreate());
+            redisTemplate.expire("order:"+order.getOrderId(),900, TimeUnit.SECONDS);
         }
-        return Result.succ(null);
+        return Result.succ(order);
+    }
+
+
+    @GetMapping("/pay/{id}")
+    public Result pay(@PathVariable(name = "id") Long id) {
+        Order order = orderService.getById(id);
+        System.out.println(order.getOrderState());
+        order.setOrderState("进行中");
+        redisTemplate.delete("order:"+order.getOrderId());
+        orderService.saveOrUpdate(order);
+        return Result.succ("支付成功");
+    }
+
+    @GetMapping("/close/{id}")
+    public Result close(@PathVariable(name = "id") Long id) {
+        Order order = orderService.getById(id);
+        order.setOrderState("已取消");
+        redisTemplate.delete("order:"+order.getOrderId());
+        orderService.saveOrUpdate(order);
+        return Result.succ("取消成功");
     }
 
     @GetMapping("/find/{id}")
@@ -99,5 +132,19 @@ public class OrderController {
         Assert.notNull(order, "该订单已被删除");
         orderService.removeById(id);
         return Result.succ(null);
+    }
+
+    /**
+     * 订单id生成策略
+     * */
+    public String getOrderIdByTime() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        String newDate = sdf.format(new Date());
+        String result = "";
+        Random random = new Random();
+        for (int i = 0; i < 3; i++) {
+            result += random.nextInt(10);
+        }
+        return newDate + result;
     }
 }

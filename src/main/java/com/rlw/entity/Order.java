@@ -31,7 +31,7 @@ public class Order implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @JSONField(name="orderId")
-    @TableId(value = "order_id", type = IdType.AUTO)
+    @TableId(value = "order_id")
     private Long orderId;
 
     @JSONField(name = "userId")

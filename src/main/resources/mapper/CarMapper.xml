@@ -16,10 +16,12 @@
     select car_id
     from t_order
     where
-    #{start} BETWEEN  order_start and order_end
+    (#{start} BETWEEN  order_start and order_end
     or #{end} BETWEEN  order_start  and order_end
     or order_start BETWEEN   #{start}  and #{end}
     or order_end  BETWEEN   #{start}  and #{end}
+    )
+    and order_state = '进行中'
     )
         <if test="status !=null and status !='' and status =='1'.toString()">
             ORDER BY car_output DESC
