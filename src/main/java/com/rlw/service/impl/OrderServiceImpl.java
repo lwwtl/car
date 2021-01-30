@@ -1,5 +1,6 @@
 package com.rlw.service.impl;
 
+import com.rlw.common.dto.MyOrderDto;
 import com.rlw.entity.Order;
 import com.rlw.mapper.CarMapper;
 import com.rlw.mapper.OrderMapper;
@@ -7,6 +8,8 @@ import com.rlw.service.OrderService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -25,5 +28,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Override
     public String findByNo(String carNo) {
         return orderMapper.findByNo(carNo);
+    }
+
+    @Override
+    public List<MyOrderDto> findMyOrder(Long id) {
+        return orderMapper.findMyOrder(id);
     }
 }

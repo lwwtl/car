@@ -5,4 +5,11 @@
             select car_id from t_car
              where car_no = #{name}
     </select>
+    <select id="findMyOrder" parameterType="Long" resultType="com.rlw.common.dto.MyOrderDto">
+        select order_id as id,car_name as name,order_start as start,order_end as end,order_state as state
+        from t_order as J
+        left join t_car as K
+        on J.car_id = K.car_id
+        where J.user_id = #{id}
+    </select>
 </mapper>

@@ -5,6 +5,10 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.rlw.common.dto.CarDto;
+import com.rlw.common.dto.MyOrderDto;
 import com.rlw.common.dto.OrderDto;
 import com.rlw.common.lang.Result;
 import com.rlw.entity.Car;
@@ -77,6 +81,21 @@ public class OrderController {
             IPage pageData = orderService.page(page, queryWrapper.orderByDesc("order_id"));
             return Result.succ(pageData);
         }
+    }
+
+
+    /**
+     * 左连接查询
+     * 根据用户id查询出车辆名和对应订单
+     * */
+    @PostMapping("/myOrderList/{id}")
+    public Result myOrderList(@RequestParam(defaultValue = "1") Integer currentPage, @RequestParam(defaultValue = "5") Integer pageSize, @PathVariable(name = "id") Long id) {
+
+            PageHelper.startPage(currentPage,pageSize);
+            List<MyOrderDto> orders = orderService.findMyOrder(id);
+            PageInfo<MyOrderDto> pageInfo = new PageInfo<>(orders);
+            return Result.succ(pageInfo);
+
     }
 
 

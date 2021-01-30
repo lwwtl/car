@@ -4,6 +4,7 @@ package com.rlw.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.rlw.common.dto.UpdatePasswordDto;
 import com.rlw.common.lang.Result;
 import com.rlw.entity.User;
 import com.rlw.service.UserService;
@@ -82,15 +83,18 @@ public class UserController {
     @PostMapping("/edit")
     public Result edit(@Validated @RequestBody User user) {
         //验证码校验，查询发送给用户的验证码与输入的是否一致
-        String code = (String) redisTemplate.opsForValue().get("user:"+user.getEmail());
-        if(!code.equals(user.getCode())){
-            return Result.fail("验证码错误");
+        if(user.getId() == null){
+            String code = (String) redisTemplate.opsForValue().get("user:"+user.getEmail());
+            if(!code.equals(user.getCode())){
+                return Result.fail("验证码错误");
+            }
+            //创建新用户时，只要存在重复账号则无法创建
+            User repeatAccount = userService.getOne(new QueryWrapper<User>().eq("user_account",user.getAccount()));
+            if(repeatAccount != null && user.getId()==null){
+                return Result.fail("该帐号已存在");
+            }
         }
-        //创建新用户时，只要存在重复账号则无法创建
-        User repeatAccount = userService.getOne(new QueryWrapper<User>().eq("user_account",user.getAccount()));
-        if(repeatAccount != null && user.getId()==null){
-            return Result.fail("该帐号已存在");
-        }
+
         if(user.getId() != null){
 //                帐号存在时更新
                 userService.saveOrUpdate(user);
@@ -106,6 +110,26 @@ public class UserController {
             userService.save(user);
         }
         return Result.succ(null);
+    }
+
+    @PostMapping("/updatePassword")
+    public Result updatePassword(@Validated @RequestBody UpdatePasswordDto upPassword) {
+        User user = userService.getById(upPassword.getUserId());
+        Md5Hash md5Hash = new Md5Hash(upPassword.getOldPassword(),user.getSalt(),1024);
+        String oldPassword = md5Hash.toHex();
+        if(oldPassword.equals(user.getPassword())){
+            if(upPassword.getNewPassword().equals(upPassword.getCheckPassword())){
+                Md5Hash md5 = new Md5Hash(upPassword.getCheckPassword(),user.getSalt(),1024);
+                String newPassword = md5.toHex();
+                user.setPassword(newPassword);
+                userService.saveOrUpdate(user);
+                return Result.succ("修改成功");
+            }else {
+                return Result.fail("两次密码不一致,请再次确认");
+            }
+        }else {
+            return Result.fail("原密码错误");
+        }
     }
 
     @GetMapping("/find/{id}")
