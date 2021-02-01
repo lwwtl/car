@@ -31,7 +31,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     @Override
-    public List<MyOrderDto> findMyOrder(Long id) {
-        return orderMapper.findMyOrder(id);
+    public List<MyOrderDto> findMyOrder(Long id,String status) {
+        return orderMapper.findMyOrder(id,status);
     }
 }

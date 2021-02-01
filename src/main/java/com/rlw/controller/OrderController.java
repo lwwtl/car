@@ -88,11 +88,14 @@ public class OrderController {
      * 左连接查询
      * 根据用户id查询出车辆名和对应订单
      * */
-    @PostMapping("/myOrderList/{id}")
-    public Result myOrderList(@RequestParam(defaultValue = "1") Integer currentPage, @RequestParam(defaultValue = "5") Integer pageSize, @PathVariable(name = "id") Long id) {
+    @GetMapping("/myOrderList/{id}")
+    public Result myOrderList(@RequestParam(defaultValue = "1") Integer currentPage,
+                              @RequestParam(defaultValue = "5") Integer pageSize,
+                              @RequestParam(defaultValue = "") String status,
+                              @PathVariable(name = "id") Long id) {
 
             PageHelper.startPage(currentPage,pageSize);
-            List<MyOrderDto> orders = orderService.findMyOrder(id);
+            List<MyOrderDto> orders = orderService.findMyOrder(id,status);
             PageInfo<MyOrderDto> pageInfo = new PageInfo<>(orders);
             return Result.succ(pageInfo);
 
@@ -105,6 +108,7 @@ public class OrderController {
             order.setOrderState("进行中");
             redisTemplate.delete("order:"+order.getOrderId());
             orderService.saveOrUpdate(order);
+            return Result.succ(order);
         }else {
             Long id = Long.valueOf(getOrderIdByTime());
             order.setOrderId(id);
@@ -114,15 +118,15 @@ public class OrderController {
             /*订单支付剩余时间*/
             redisTemplate.opsForValue().set("order:"+order.getOrderId(),order.getOrderCreate());
             redisTemplate.expire("order:"+order.getOrderId(),900, TimeUnit.SECONDS);
+            return Result.succ((order.getOrderId()).toString());
         }
-        return Result.succ(order);
+
     }
 
 
     @GetMapping("/pay/{id}")
     public Result pay(@PathVariable(name = "id") Long id) {
         Order order = orderService.getById(id);
-        System.out.println(order.getOrderState());
         order.setOrderState("进行中");
         redisTemplate.delete("order:"+order.getOrderId());
         orderService.saveOrUpdate(order);

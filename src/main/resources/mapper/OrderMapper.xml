@@ -11,5 +11,17 @@
         left join t_car as K
         on J.car_id = K.car_id
         where J.user_id = #{id}
+        <if test="status !=null and status !='' and status =='待支付'">
+            and J.order_state = '待支付'
+        </if>
+        <if test="status !=null and status !='' and status =='进行中'">
+            and J.order_state = '进行中'
+        </if>
+        <if test="status !=null and status !='' and status =='已完成'">
+            and J.order_state = '已完成'
+        </if>
+        <if test="status !=null and status !='' and status =='已取消'">
+            and J.order_state = '已取消'
+        </if>
     </select>
 </mapper>

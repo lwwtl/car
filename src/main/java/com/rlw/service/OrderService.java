@@ -17,5 +17,5 @@ import java.util.List;
  */
 public interface OrderService extends IService<Order> {
     String findByNo(String carNo);
-    List<MyOrderDto> findMyOrder(Long id);
+    List<MyOrderDto> findMyOrder(Long id,String status);
 }

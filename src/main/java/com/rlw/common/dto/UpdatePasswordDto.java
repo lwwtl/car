@@ -1,21 +1,22 @@
 package com.rlw.common.dto;
 
-import com.alibaba.fastjson.annotation.JSONField;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
 public class UpdatePasswordDto  implements Serializable {
-    @JSONField(name = "userId")
+    @JsonProperty(value = "userId")
     private Long userId;
 
-    @JSONField(name = "oldPassword")
+    @JsonProperty(value = "oldPassword")
     private String oldPassword;
 
-    @JSONField(name = "newPassword")
+    @JsonProperty(value = "newPassword")
     private String newPassword;
 
-    @JSONField(name = "checkPassword")
+    @JsonProperty(value = "checkPassword")
     private String checkPassword;
 }

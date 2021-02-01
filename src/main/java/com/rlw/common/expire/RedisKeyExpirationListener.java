@@ -34,7 +34,7 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
         if(name.equals("order")){
             String orderId = temp.substring(temp.indexOf(":")+1);
             Order order = orderService.getById(orderId);
-            order.setOrderState("已关闭");
+            order.setOrderState("已取消");
             orderService.saveOrUpdate(order);
         }
     }

@@ -18,6 +18,6 @@ import java.util.List;
  */
 public interface OrderMapper extends BaseMapper<Order> {
     String findByNo(String carNo);
-    List<MyOrderDto> findMyOrder(@Param("id")Long id);
+    List<MyOrderDto> findMyOrder(@Param("id")Long id,@Param("status")String status);
 
 }

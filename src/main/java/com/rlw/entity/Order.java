@@ -2,7 +2,7 @@ package com.rlw.entity;
 
 import java.math.BigDecimal;
 
-import com.alibaba.fastjson.annotation.JSONField;
+
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -30,41 +33,46 @@ public class Order implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @JSONField(name="orderId")
+    /**
+     * 将long类型转化为string类型传值给前端
+     * 因为java的long类型是18位，js的long类型是16位，会导致精度丢失
+     * 返回String给前端
+     * */
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableId(value = "order_id")
     private Long orderId;
 
-    @JSONField(name = "userId")
+    @JsonProperty(value = "userId")
     private Long userId;
 
-    @JSONField(name = "carId")
+    @JsonProperty(value = "carId")
     private Long carId;
 
-    @JSONField(name = "orderStart")
+    @JsonProperty(value = "orderStart")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime orderStart;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JSONField(name = "orderEnd")
+    @JsonProperty(value = "orderEnd")
     private LocalDateTime orderEnd;
 
-    @JSONField(name = "orderSource")
+    @JsonProperty(value = "orderSource")
     private String orderSource;
 
-    @JSONField(name = "orderDestination")
+    @JsonProperty(value = "orderDestination")
     private String orderDestination;
 
-    @JSONField(name = "orderRentDays")
+    @JsonProperty(value = "orderRentDays")
     private Long orderRentDays;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JSONField(name = "orderCreate")
+    @JsonProperty(value = "orderCreate")
     private LocalDateTime orderCreate;
 
-    @JSONField(name = "orderState")
+    @JsonProperty(value = "orderState")
     private String orderState;
 
-    @JSONField(name = "orderTotal")
+    @JsonProperty(value = "orderTotal")
     private BigDecimal orderTotal;
 
 

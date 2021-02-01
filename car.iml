@@ -168,6 +168,5 @@
     <orderEntry type="library" name="Maven: com.github.jsqlparser:jsqlparser:2.0" level="project" />
     <orderEntry type="library" name="Maven: cn.ucloud.ufile:ufile-client-java:2.4.4" level="project" />
     <orderEntry type="library" name="Maven: cn.ucloud.ufile:ufile-core:2.4.4" level="project" />
-    <orderEntry type="library" name="Maven: com.alibaba:fastjson:1.2.39" level="project" />
   </component>
 </module>
