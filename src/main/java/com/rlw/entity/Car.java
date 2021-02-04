@@ -76,5 +76,7 @@ public class Car implements Serializable {
     @TableField("car_region")
     private String region;
 
+    @TableField("car_deposit")
+    private BigDecimal deposit;
 
 }

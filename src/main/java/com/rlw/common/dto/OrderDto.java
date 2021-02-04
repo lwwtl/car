@@ -15,4 +15,6 @@ public class OrderDto implements Serializable {
     /*订单编号*/
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
+
+    private String state;
 }

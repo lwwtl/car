@@ -11,19 +11,15 @@ import com.rlw.common.dto.CarDto;
 import com.rlw.common.dto.MyOrderDto;
 import com.rlw.common.dto.OrderDto;
 import com.rlw.common.lang.Result;
-import com.rlw.entity.Car;
-import com.rlw.entity.Order;
-import com.rlw.entity.Store;
-import com.rlw.service.CarService;
-import com.rlw.service.OrderService;
-import com.rlw.service.StoreService;
-import com.rlw.service.UserService;
+import com.rlw.entity.*;
+import com.rlw.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -50,6 +46,12 @@ public class OrderController {
     OrderService orderService;
 
     @Autowired
+    RepairService repairService;
+
+    @Autowired
+    ViolationsService violationsService;
+
+    @Autowired
     UserService userService;
 
     @Autowired
@@ -63,7 +65,8 @@ public class OrderController {
         String carNo = orderDto.getCno();
         String userAccount = orderDto.getAccount();
         Long id = orderDto.getId();
-        if (StringUtils.isEmpty(carNo) && StringUtils.isEmpty(userAccount) && StringUtils.isEmpty(id)) {
+        String state = orderDto.getState();
+        if (StringUtils.isEmpty(carNo) && StringUtils.isEmpty(userAccount) && StringUtils.isEmpty(id) && StringUtils.isEmpty(state)) {
             IPage pageData = orderService.page(page, new QueryWrapper<Order>().orderByDesc("order_id"));
             return Result.succ(pageData);
         } else {
@@ -78,7 +81,10 @@ public class OrderController {
             if (!StringUtils.isEmpty(id)) {
                 queryWrapper.eq("order_id", id);
             }
-            IPage pageData = orderService.page(page, queryWrapper.orderByDesc("order_id"));
+            if(!StringUtils.isEmpty(state)){
+                queryWrapper.eq("order_state",state);
+            }
+            IPage pageData = orderService.page(page, queryWrapper.orderByDesc("order_create"));
             return Result.succ(pageData);
         }
     }
@@ -105,8 +111,6 @@ public class OrderController {
     @PostMapping("/edit")
     public Result edit(@RequestBody Order order) {
         if (order.getOrderId() != null) {
-            order.setOrderState("进行中");
-            redisTemplate.delete("order:"+order.getOrderId());
             orderService.saveOrUpdate(order);
             return Result.succ(order);
         }else {
@@ -118,7 +122,7 @@ public class OrderController {
             /*订单支付剩余时间*/
             redisTemplate.opsForValue().set("order:"+order.getOrderId(),order.getOrderCreate());
             redisTemplate.expire("order:"+order.getOrderId(),900, TimeUnit.SECONDS);
-            return Result.succ((order.getOrderId()).toString());
+            return Result.succ(order);
         }
 
     }
@@ -127,7 +131,7 @@ public class OrderController {
     @GetMapping("/pay/{id}")
     public Result pay(@PathVariable(name = "id") Long id) {
         Order order = orderService.getById(id);
-        order.setOrderState("进行中");
+        order.setOrderState("待取车");
         redisTemplate.delete("order:"+order.getOrderId());
         orderService.saveOrUpdate(order);
         return Result.succ("支付成功");
@@ -155,6 +159,69 @@ public class OrderController {
         Assert.notNull(order, "该订单已被删除");
         orderService.removeById(id);
         return Result.succ(null);
+    }
+
+    @GetMapping("/storeOut/{id}")
+    public Result storeOut(@PathVariable(name = "id") Long id) {
+        Order order = orderService.getById(id);
+        if(order!=null){
+            order.setOrderState("进行中");
+            Car car = carService.getById(order.getCarId());
+            car.setState("已出库");
+
+            Repair repair = new Repair();
+            repair.setOrderId(order.getOrderId());
+            repair.setCarId(order.getCarId());
+
+            Violations violations = new Violations();
+            violations.setOrderId(order.getOrderId());
+            violations.setCarId(order.getCarId());
+            violations.setUserId(order.getUserId());
+
+            try {
+                repairService.save(repair);
+                violationsService.save(violations);
+                orderService.saveOrUpdate(order);
+                carService.saveOrUpdate(car);
+            }catch (Exception e){
+                return Result.fail("请勿重复出库!");
+            }
+            return Result.succ("出库成功");
+        }else {
+            return Result.fail("该订单不存在!");
+        }
+    }
+
+    @GetMapping("/storeIn/{id}")
+    public Result storeIn(@PathVariable(name = "id") Long id) {
+        QueryWrapper<Repair> q1 = new QueryWrapper<>();
+        q1.eq("order_id",id);
+        Repair repair = repairService.getOne(q1);
+        String repairRecorder = repair.getRepairRecorder();
+        QueryWrapper<Violations> q2 = new QueryWrapper<>();
+        q2.eq("order_id",id);
+        Violations violations = violationsService.getOne(q2);
+        String violationsRecorder = violations.getViolationsRecorder();
+        if(StringUtils.isEmpty(repairRecorder) || StringUtils.isEmpty(violationsRecorder)){
+            return Result.fail("请先完成入库登记再执行入库操作!");
+        }else {
+            BigDecimal repairCost = new BigDecimal(String.valueOf(repair.getRepairCost()));
+            BigDecimal violationsCost = new BigDecimal(String.valueOf(violations.getViolationsCost()));
+            BigDecimal totalCost = repairCost.add(violationsCost);
+            System.out.println("扣除押金:"+totalCost);
+            Order order = orderService.getById(id);
+            order.setOrderExtra(totalCost);
+            order.setOrderState("已完成");
+            Car car = carService.getById(order.getCarId());
+            if(repair.getRepairIf().equals(1L)){
+                car.setState("维修中");
+            }else {
+                car.setState("已入库");
+            }
+            orderService.saveOrUpdate(order);
+            carService.saveOrUpdate(car);
+            return Result.succ("入库成功");
+        }
     }
 
     /**
