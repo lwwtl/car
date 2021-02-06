@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.rlw.mapper.RepairMapper">
-
+    <select id="repairList" parameterType="String" resultType="com.rlw.common.dto.RepairDto">
+        select repair_id as repairId,order_id as orderId,car_no as carNo,
+        repair_if as repairIf,repair_part as repairPart,repair_detail as repairDetail,
+        repair_cost as repairCost,repair_create as repairCreate,repair_recorder as repairRecorder
+        from t_repair as J
+        left join t_car as K
+        on J.car_id = K.car_id
+        <if test="recorder ==''">
+            where J.repair_recorder is Null
+        </if>
+        <if test="recorder !=''">
+            where J.repair_recorder is not Null
+        </if>
+        <if test="id !=null and id !=''">
+            and J.order_id =#{id}
+        </if>
+        <if test="no !=null and no !=''">
+            and K.car_no =#{no}
+        </if>
+        ORDER BY J.repair_create DESC
+    </select>
 </mapper>

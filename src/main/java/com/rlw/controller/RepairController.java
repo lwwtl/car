@@ -5,6 +5,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.rlw.common.dto.RepairDto;
+import com.rlw.common.dto.ViolationsDto;
 import com.rlw.common.lang.Result;
 import com.rlw.entity.Repair;
 import com.rlw.service.RepairService;
@@ -15,6 +19,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 /**
@@ -33,22 +38,18 @@ public class RepairController {
     @Autowired
     RepairService repairService;
 
-    @PostMapping("/list")
-    public Result list(@RequestParam(defaultValue = "1") Integer currentPage, @RequestParam(defaultValue = "5") Integer pageSize, @RequestBody Repair repair) {
-        Page page = new Page(currentPage, pageSize);
-        QueryWrapper<Repair> queryWrapper = new QueryWrapper<>();
-        Long orderId = repair.getOrderId();
-        /*待处理列表展示*/
-       /* String repairRecorder = repair.getRepairRecorder();*/
-        if (StringUtils.isEmpty(orderId)) {
 
-            IPage pageData = repairService.page(page, new QueryWrapper<Repair>().orderByDesc("repair_create"));
-            return Result.succ(pageData);
-        } else {
-            queryWrapper.eq("order_id", repair.getOrderId());
-            IPage pageData = repairService.page(page, queryWrapper.orderByDesc("repair_create"));
-            return Result.succ(pageData);
-        }
+    @PostMapping("/list")
+    public Result list(@RequestParam(defaultValue = "1") Integer currentPage,
+                       @RequestParam(defaultValue = "5") Integer pageSize,
+                       @RequestBody RepairDto repairDto) {
+        Long id = repairDto.getOrderId();
+        String no = repairDto.getCarNo();
+        String recorder = repairDto.getRepairRecorder();
+        PageHelper.startPage(currentPage,pageSize);
+        List<RepairDto> list = repairService.repairList(id,no,recorder);
+        PageInfo<RepairDto> pageInfo = new PageInfo<>(list);
+        return Result.succ(pageInfo);
     }
 
 

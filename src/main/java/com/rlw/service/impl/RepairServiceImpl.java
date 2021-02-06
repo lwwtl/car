@@ -1,10 +1,14 @@
 package com.rlw.service.impl;
 
+import com.rlw.common.dto.RepairDto;
 import com.rlw.entity.Repair;
 import com.rlw.mapper.RepairMapper;
 import com.rlw.service.RepairService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -17,4 +21,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class RepairServiceImpl extends ServiceImpl<RepairMapper, Repair> implements RepairService {
 
+    @Autowired(required = false)
+    private RepairMapper repairMapper;
+
+    @Override
+    public List<RepairDto> repairList(Long id, String no, String recorder) {
+        return repairMapper.repairList(id,no,recorder);
+    }
 }
