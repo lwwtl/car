@@ -96,6 +96,14 @@ public class StoreController {
         return Result.succ(store);
     }
 
+    @PostMapping("/findStoreByCity")
+    public Result findStoreByCity(@RequestParam(name = "value") String value) {
+        QueryWrapper<Store> wrapper = new QueryWrapper<>();
+        wrapper.like("store_address",value);
+        List<Store> storeList = storeMapper.selectList(wrapper);
+        return Result.succ(storeList);
+    }
+
     @GetMapping("/del/{id}")
     public Result del(@PathVariable(name = "id") Long id) {
         Store store = storeService.getById(id);

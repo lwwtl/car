@@ -54,5 +54,11 @@ public class Store implements Serializable {
     @TableField("store_close")
     private String close;
 
+    @TableField("store_longitude")
+    private String longitude;
+
+    @TableField("store_latitude")
+    private String latitude;
+
 
 }
