@@ -18,4 +18,6 @@ import java.util.List;
  */
 public interface CarMapper extends BaseMapper<Car> {
     List<Car> findRentCar(@Param("source")String source, @Param("start")String start, @Param("end")String end,@Param("status") String status);
+    String carCount();
+    String carRent();
 }

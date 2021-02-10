@@ -37,6 +37,12 @@
         </if>
     </select>
 
-
+    <select id="carCount" resultType="String">
+        select count(car_id)as carCount FROM t_car
+    </select>
+    <select id="carRent" resultType="String">
+        select count(car_state)as carRent FROM t_car
+        where car_state = "已出库"
+    </select>
 
 </mapper>

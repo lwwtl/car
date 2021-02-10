@@ -147,6 +147,13 @@ public class UserController {
         return Result.succ(null);
     }
 
+
+    @GetMapping("userNum")
+    public Result userNum(){
+        String userNum = userService.userNum();
+        return Result.succ(userNum);
+    }
+
     @GetMapping("/changeUserState/{id}")
     public Result changeUserState(@PathVariable(name = "id")Long id){
         User user = userService.getById(id);

@@ -17,4 +17,6 @@ import java.util.List;
  */
 public interface CarService extends IService<Car> {
     List<Car> findRentCar( String source, String start, String end,String status);
+    String carCount();
+    String carRent();
 }

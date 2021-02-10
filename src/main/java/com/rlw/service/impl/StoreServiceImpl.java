@@ -4,6 +4,7 @@ import com.rlw.entity.Store;
 import com.rlw.mapper.StoreMapper;
 import com.rlw.service.StoreService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,5 +17,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store> implements StoreService {
+    @Autowired(required = false)
+    private StoreMapper storeMapper;
 
+    @Override
+    public String storeNum() {
+        return storeMapper.storeNum();
+    }
 }

@@ -5,4 +5,7 @@
             select user_id from t_user
              where user_account = #{account}
     </select>
+    <select id="userNum" resultType="String">
+        select count(user_id)as userNum FROM t_user
+    </select>
 </mapper>

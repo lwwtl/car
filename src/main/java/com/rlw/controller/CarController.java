@@ -142,6 +142,16 @@ private UCloudProvider uCloudProvider;
         return Result.succ(null);
     }
 
+
+    @GetMapping("carRate")
+    public Result carRate(){
+        String carCount = carService.carCount();
+        String carRent = carService.carRent();
+        StringBuilder rt = new StringBuilder();
+        rt.append(carCount).append(",").append(carRent);
+        return Result.succ(rt);
+    }
+
     /**
      * 七牛云图片上传
      * */

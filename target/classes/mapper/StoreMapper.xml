@@ -2,4 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.rlw.mapper.StoreMapper">
 
+    <select id="storeNum" resultType="String">
+        select count(store_id)as storeNum FROM t_store
+    </select>
 </mapper>

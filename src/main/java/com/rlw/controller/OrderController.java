@@ -7,9 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.rlw.common.dto.CarDto;
-import com.rlw.common.dto.MyOrderDto;
-import com.rlw.common.dto.OrderDto;
+import com.rlw.common.dto.*;
 import com.rlw.common.lang.Result;
 import com.rlw.entity.*;
 import com.rlw.service.*;
@@ -222,6 +220,17 @@ public class OrderController {
             carService.saveOrUpdate(car);
             return Result.succ("入库成功");
         }
+    }
+
+    @GetMapping("drawFold")
+    public Result drawFold() {
+        List<OrderStatisticsDto> drawFold = orderService.drawFold();
+        return Result.succ(drawFold);
+    }
+    @GetMapping("drawLine")
+    public Result drawLine() {
+        List<CatHotStaticsDto> drawLine = orderService.drawLine();
+        return Result.succ(drawLine);
     }
 
     /**

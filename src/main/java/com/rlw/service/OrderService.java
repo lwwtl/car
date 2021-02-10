@@ -1,6 +1,8 @@
 package com.rlw.service;
 
+import com.rlw.common.dto.CatHotStaticsDto;
 import com.rlw.common.dto.MyOrderDto;
+import com.rlw.common.dto.OrderStatisticsDto;
 import com.rlw.entity.Order;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Param;
@@ -18,4 +20,7 @@ import java.util.List;
 public interface OrderService extends IService<Order> {
     String findByNo(String carNo);
     List<MyOrderDto> findMyOrder(Long id,String status);
+    List<OrderStatisticsDto> drawFold();
+    List<CatHotStaticsDto> drawLine();
+
 }

@@ -111,4 +111,10 @@ public class StoreController {
         storeService.removeById(id);
         return Result.succ(null);
     }
+
+    @GetMapping("storeNum")
+    public Result storeNum(){
+        String storeNum = storeService.storeNum();
+        return Result.succ(storeNum);
+    }
 }

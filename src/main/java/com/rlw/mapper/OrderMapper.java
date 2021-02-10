@@ -1,6 +1,8 @@
 package com.rlw.mapper;
 
+import com.rlw.common.dto.CatHotStaticsDto;
 import com.rlw.common.dto.MyOrderDto;
+import com.rlw.common.dto.OrderStatisticsDto;
 import com.rlw.entity.Car;
 import com.rlw.entity.Order;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -19,5 +21,6 @@ import java.util.List;
 public interface OrderMapper extends BaseMapper<Order> {
     String findByNo(String carNo);
     List<MyOrderDto> findMyOrder(@Param("id")Long id,@Param("status")String status);
-
+    List<OrderStatisticsDto> drawFold();
+    List<CatHotStaticsDto> drawLine();
 }

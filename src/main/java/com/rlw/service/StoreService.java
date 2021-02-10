@@ -12,5 +12,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2021-01-06
  */
 public interface StoreService extends IService<Store> {
-
+    String storeNum();
 }

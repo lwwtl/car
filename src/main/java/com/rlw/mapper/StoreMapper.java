@@ -12,5 +12,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2021-01-06
  */
 public interface StoreMapper extends BaseMapper<Store> {
-
+    String storeNum();
 }

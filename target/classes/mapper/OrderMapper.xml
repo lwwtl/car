@@ -28,4 +28,31 @@
         </if>
         ORDER BY J.order_create DESC
     </select>
+    <select id="drawFold"  resultType="com.rlw.common.dto.OrderStatisticsDto">
+        SELECT
+            times AS days,
+           count(order_id) AS quantity
+        FROM
+        (
+        SELECT @cdate := date_add(@cdate,interval -1 day) times from
+        (SELECT @cdate := CURDATE() from m_dim_day limit 30)as t1
+        )as dates
+        left join(
+        select order_id,order_create
+        FROM
+        t_order
+        )t2 on DATE_FORMAT(order_create, '%Y-%m-%d') = dates.times
+        GROUP BY
+        times
+         order by times
+    </select>
+    <select id="drawLine" resultType="com.rlw.common.dto.CatHotStaticsDto">
+        select car_name as name,count(order_id) as total
+        from t_order as t1
+        left join
+        t_car as t2
+        on t1.car_id = t2.car_id
+        GROUP BY car_name
+    </select>
+
 </mapper>

@@ -1,6 +1,8 @@
 package com.rlw.service.impl;
 
+import com.rlw.common.dto.CatHotStaticsDto;
 import com.rlw.common.dto.MyOrderDto;
+import com.rlw.common.dto.OrderStatisticsDto;
 import com.rlw.entity.Order;
 import com.rlw.mapper.CarMapper;
 import com.rlw.mapper.OrderMapper;
@@ -33,5 +35,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Override
     public List<MyOrderDto> findMyOrder(Long id,String status) {
         return orderMapper.findMyOrder(id,status);
+    }
+
+    @Override
+    public List<OrderStatisticsDto> drawFold() {
+        return orderMapper.drawFold();
+    }
+
+    @Override
+    public List<CatHotStaticsDto> drawLine() {
+        return orderMapper.drawLine();
     }
 }

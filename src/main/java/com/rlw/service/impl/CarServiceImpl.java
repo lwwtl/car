@@ -29,4 +29,14 @@ public class CarServiceImpl extends ServiceImpl<CarMapper, Car> implements CarSe
     public List<Car> findRentCar( String source, String start, String end,String status) {
         return carMapper.findRentCar(source,start,end,status);
     }
+
+    @Override
+    public String carCount() {
+        return carMapper.carCount();
+    }
+
+    @Override
+    public String carRent() {
+        return carMapper.carRent();
+    }
 }
