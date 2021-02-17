@@ -7,7 +7,10 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.rlw.common.dto.CarBrandDto;
 import com.rlw.common.dto.CarDto;
+import com.rlw.common.dto.CarTypeDto;
+import com.rlw.common.dto.MyViolationsDto;
 import com.rlw.common.lang.Result;
 import com.rlw.entity.Car;
 
@@ -107,8 +110,31 @@ private UCloudProvider uCloudProvider;
         }
     }
 
+    /**
+     * 根据车型来挑选车辆
+     * */
+    @PostMapping("/chooseType")
+    public Result chooseType(@RequestParam(defaultValue = "1") Integer currentPage,
+                             @RequestParam(defaultValue = "5") Integer pageSize,
+                             @RequestBody CarTypeDto carTypeDto) {
+        String city = carTypeDto.getCity();
+        /*前台查询门店可组车辆*/
+        if(!StringUtils.isEmpty(city)){
+            String type = carTypeDto.getType();
+            String brand = carTypeDto.getBrand();
+            String start = carTypeDto.getStart();
+            String end = carTypeDto.getEnd();
+            PageHelper.startPage(currentPage,pageSize);
+            List<Car> cars = carService.findCarByType(city,type,brand,start,end);
+            PageInfo<Car> pageInfo = new PageInfo<>(cars);
+            return Result.succ(pageInfo);
+        }else {
+            return Result.fail("城市未选择");
+        }
+    }
 
-    @PostMapping("/edit")
+
+        @PostMapping("/edit")
     public Result edit(@RequestBody Car car) {
         Car repeatNo = carService.getOne(new QueryWrapper<Car>().eq("car_no", car.getNo()));
         if (repeatNo != null && car.getId() == null) {
@@ -150,6 +176,12 @@ private UCloudProvider uCloudProvider;
         StringBuilder rt = new StringBuilder();
         rt.append(carCount).append(",").append(carRent);
         return Result.succ(rt);
+    }
+
+    @GetMapping("brandList")
+    public Result brandList(){
+        List<CarBrandDto> brandList = carService.brandList();
+        return Result.succ(brandList);
     }
 
     /**
