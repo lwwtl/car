@@ -158,7 +158,12 @@ private UCloudProvider uCloudProvider;
         return Result.succ(car);
     }
 
-
+    @GetMapping("/findStore/{id}")
+    public Result findStore(@PathVariable(name = "id") Long id) {
+        Car car = carService.getById(id);
+        String storeName = car.getStore();
+        return Result.succ(storeName);
+    }
 
     @GetMapping("/del/{id}")
     public Result del(@PathVariable(name = "id") Long id) {
