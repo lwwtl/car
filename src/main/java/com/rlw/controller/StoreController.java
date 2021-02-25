@@ -10,6 +10,7 @@ import com.rlw.entity.Store;
 import com.rlw.mapper.StoreMapper;
 import com.rlw.service.StoreService;
 import lombok.experimental.Accessors;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;

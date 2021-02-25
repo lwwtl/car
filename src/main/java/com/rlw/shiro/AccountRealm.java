@@ -9,10 +9,14 @@ import com.rlw.util.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Slf4j
 @Component
@@ -29,7 +33,17 @@ public class AccountRealm extends AuthorizingRealm {
     }
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        return null;
+
+        //获取身份信息
+
+        String primaryPrincipal = principals.toString();
+        String id = primaryPrincipal.substring(primaryPrincipal.indexOf("=")+1,primaryPrincipal.indexOf(","));
+        System.out.println("员工："+id);
+        Employee employee = employeeService.getById(Long.parseLong(id));
+        SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
+        simpleAuthorizationInfo.addRole(employee.getRole());
+        return simpleAuthorizationInfo;
+
     }
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {

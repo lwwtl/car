@@ -12,6 +12,7 @@ import com.rlw.util.JwtUtils;
 import com.rlw.util.SaltUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -154,6 +155,7 @@ public class UserController {
         return Result.succ(userNum);
     }
 
+    @RequiresRoles("a")//需要管理员角色才可以封禁/解封
     @GetMapping("/changeUserState/{id}")
     public Result changeUserState(@PathVariable(name = "id")Long id){
         User user = userService.getById(id);

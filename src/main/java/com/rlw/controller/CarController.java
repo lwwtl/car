@@ -53,8 +53,7 @@ public class CarController {
 
 @Autowired
 private UCloudProvider uCloudProvider;
-    @Autowired
-    StoreService storeService;
+
 
 
     @PostMapping("/list")
@@ -110,28 +109,7 @@ private UCloudProvider uCloudProvider;
         }
     }
 
-    /**
-     * 根据车型来挑选车辆
-     * */
-    @PostMapping("/chooseType")
-    public Result chooseType(@RequestParam(defaultValue = "1") Integer currentPage,
-                             @RequestParam(defaultValue = "5") Integer pageSize,
-                             @RequestBody CarTypeDto carTypeDto) {
-        String city = carTypeDto.getCity();
-        /*前台查询门店可组车辆*/
-        if(!StringUtils.isEmpty(city)){
-            String type = carTypeDto.getType();
-            String brand = carTypeDto.getBrand();
-            String start = carTypeDto.getStart();
-            String end = carTypeDto.getEnd();
-            PageHelper.startPage(currentPage,pageSize);
-            List<Car> cars = carService.findCarByType(city,type,brand,start,end);
-            PageInfo<Car> pageInfo = new PageInfo<>(cars);
-            return Result.succ(pageInfo);
-        }else {
-            return Result.fail("城市未选择");
-        }
-    }
+
 
 
         @PostMapping("/edit")
@@ -173,6 +151,28 @@ private UCloudProvider uCloudProvider;
         return Result.succ(null);
     }
 
+    /**
+     * 根据车型来挑选车辆
+     * */
+    @PostMapping("/chooseType")
+    public Result chooseType(@RequestParam(defaultValue = "1") Integer currentPage,
+                             @RequestParam(defaultValue = "5") Integer pageSize,
+                             @RequestBody CarTypeDto carTypeDto) {
+        String city = carTypeDto.getCity();
+        /*前台查询门店可组车辆*/
+        if(!StringUtils.isEmpty(city)){
+            String type = carTypeDto.getType();
+            String brand = carTypeDto.getBrand();
+            String start = carTypeDto.getStart();
+            String end = carTypeDto.getEnd();
+            PageHelper.startPage(currentPage,pageSize);
+            List<Car> cars = carService.findCarByType(city,type,brand,start,end);
+            PageInfo<Car> pageInfo = new PageInfo<>(cars);
+            return Result.succ(pageInfo);
+        }else {
+            return Result.fail("城市未选择");
+        }
+    }
 
     @GetMapping("carRate")
     public Result carRate(){

@@ -103,6 +103,7 @@ public class AccountController {
     }
 
     @RequiresAuthentication
+//   通过认证才可以访问
     @GetMapping("/logout")
     public Result logout(){
         SecurityUtils.getSubject().logout();

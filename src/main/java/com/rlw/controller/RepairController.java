@@ -13,6 +13,7 @@ import com.rlw.common.lang.Result;
 import com.rlw.entity.Repair;
 import com.rlw.service.RepairService;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.util.StringUtils;
@@ -30,6 +31,7 @@ import java.util.List;
  * @author 饶立玮
  * @since 2021-02-04
  */
+
 @RestController
 @RequestMapping("/repair")
 public class RepairController {
@@ -37,7 +39,6 @@ public class RepairController {
 
     @Autowired
     RepairService repairService;
-
 
     @PostMapping("/list")
     public Result list(@RequestParam(defaultValue = "1") Integer currentPage,

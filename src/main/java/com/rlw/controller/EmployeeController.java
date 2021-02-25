@@ -9,6 +9,7 @@ import com.rlw.entity.Employee;
 import com.rlw.service.EmployeeService;
 import com.rlw.util.SaltUtils;
 import freemarker.template.utility.StringUtil;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -63,6 +64,7 @@ public class EmployeeController {
         }
     }
 
+    @RequiresRoles("a")//用来判断角色
     @PostMapping("/edit")
     public Result edit(@Validated @RequestBody Employee employee) {
         Employee repeatAccount = employeeService.getOne(new QueryWrapper<Employee>().eq("emp_account",employee.getAccount()));
@@ -97,6 +99,7 @@ public class EmployeeController {
         }
         return Result.succ(null);
     }
+
 
     @GetMapping("/find/{id}")
     public Result find(@PathVariable(name = "id")Long id){

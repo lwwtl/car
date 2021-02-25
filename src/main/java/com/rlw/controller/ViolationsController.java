@@ -14,6 +14,7 @@ import com.rlw.entity.Repair;
 import com.rlw.entity.Violations;
 import com.rlw.service.RepairService;
 import com.rlw.service.ViolationsService;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -29,11 +30,13 @@ import java.util.List;
  * @author 饶立玮
  * @since 2021-02-04
  */
+
 @RestController
 @RequestMapping("/violations")
 public class ViolationsController {
     @Autowired
     ViolationsService violationsService;
+
 
     @PostMapping("/list")
     public Result list(@RequestParam(defaultValue = "1") Integer currentPage,
@@ -66,6 +69,7 @@ public class ViolationsController {
         Violations violations = violationsService.getOne(queryWrapper);
         return Result.succ(violations);
     }
+
 
     @GetMapping("/myViolationsList/{id}")
     public Result myOrderList(@RequestParam(defaultValue = "1") Integer currentPage,

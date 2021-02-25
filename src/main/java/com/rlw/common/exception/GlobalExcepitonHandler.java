@@ -52,4 +52,5 @@ public class GlobalExcepitonHandler {
         log.error("运行时异常:-------------->",e);
         return Result.fail(e.getMessage());
     }
+
 }
